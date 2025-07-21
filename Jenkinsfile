@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/mehoolgoria1020/pqc-flask-demo.git', branch: 'main'
+                git url: 'https://github.com/mehoolgoria1020/pqc_nuig', branch: 'main'
             }
         }
         stage('Install Dependencies') {
