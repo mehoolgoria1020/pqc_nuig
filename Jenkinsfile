@@ -26,7 +26,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t your-username/pqc-flask-demo:latest .'
+                sh 'docker build -t 9977262607/pqc-flask-demo:latest .'
             }
         }
         stage('Push Docker Image') {
