@@ -1,25 +1,18 @@
 pipeline {
-    agent any  // Use built-in Jenkins node (MacBook)
-    
+    agent any
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
         SSH_CREDENTIALS = credentials('ssh-ed25519-credentials-id')
         PATH = "/usr/local/bin:/opt/homebrew/bin:$PATH"
     }
-    
     stages {
         stage('Checkout') {
             steps {
                 sshagent(credentials: ['ssh-ed25519-credentials-id']) {
                     sh '''
-                        # Configure SSH to use mlkem512-sha256 for GitHub
-                        echo "Host github.com\n  KexAlgorithms mlkem512-sha256\n  Port 22\n  User git" > ~/.ssh/config
+                        echo "Host github.com\\n  KexAlgorithms mlkem512-sha256\\n  Port 22\\n  User git\\n  IdentityFile ~/.ssh/id_ed25519" > ~/.ssh/config
                         chmod 600 ~/.ssh/config
-                        
-                        # Test SSH connection to GitHub
                         /usr/local/bin/ssh -T git@github.com || true
-                        
-                        # Clone repository using oqs-openssh
                         git clone git@github.com:mehoolgoria1020/pqc_nuig.git
                         cd pqc_nuig
                         git checkout main
@@ -27,7 +20,6 @@ pipeline {
                 }
             }
         }
-        
         stage('Setup Python Environment') {
             steps {
                 sh '''
@@ -39,7 +31,6 @@ pipeline {
                 '''
             }
         }
-        
         stage('Install Dependencies') {
             steps {
                 sh '''
@@ -49,7 +40,6 @@ pipeline {
                 '''
             }
         }
-        
         stage('Test') {
             steps {
                 sh '''
@@ -59,7 +49,6 @@ pipeline {
                 '''
             }
         }
-        
         stage('Build Docker Image') {
             steps {
                 sh '''
@@ -70,7 +59,6 @@ pipeline {
                 '''
             }
         }
-        
         stage('Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
@@ -83,7 +71,6 @@ pipeline {
             }
         }
     }
-    
     post {
         always {
             sh '''
@@ -95,7 +82,6 @@ pipeline {
             '''
             cleanWs()
         }
-        
         success {
             echo 'Pipeline completed successfully!'
             sh '''
@@ -103,23 +89,20 @@ pipeline {
                 docker images | grep pqc-flask-demo || echo "No pqc-flask-demo images found"
             '''
         }
-        
         failure {
             echo 'Pipeline failed!'
             sh '''
                 echo "=== Docker Status ==="
                 docker --version || echo "Docker not available"
                 docker info || echo "Docker daemon not running"
-                
                 echo "=== Python Status ==="
                 python3 --version || python --version || echo "Python not available"
-                
                 echo "=== Current Directory ==="
                 ls -la
-                
                 echo "=== Requirements File ==="
                 cat pqc_nuig/requirements.txt || echo "requirements.txt not found"
             '''
         }
     }
 }
+EOF
