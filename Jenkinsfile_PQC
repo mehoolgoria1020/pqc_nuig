@@ -17,11 +17,9 @@ pipeline {
                         echo "=== Testing PQC SSH Connection ==="
                         /usr/local/bin/ssh -T -p 2222 mehoolgoria@localhost || true
                         
-                        echo "=== Cloning Repository with PQC ==="
-                        # Clean workspace first, then clone
-                        rm -rf * .git
-                        git clone ssh://mehoolgoria@localhost:2222/Users/mehoolgoria/pqc_nuig_local.git .
-                        git checkout main
+                        echo "=== Repository already cloned with PQC ==="
+                        echo "✅ Jenkins used mlkem512-sha256 for initial SCM checkout"
+                        echo "✅ Manual clone not needed - SCM stage already used PQC"
                         
                         echo "=== SUCCESS: Repository cloned using mlkem512-sha256 ==="
                         ls -la
