@@ -1,78 +1,38 @@
 pipeline {
     agent any
+
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
-        SSH_CREDENTIALS = credentials('ssh-ed25519-credentials-id')
-        PATH = "/usr/local/bin:/opt/homebrew/bin:$PATH"
+        SSH_CREDENTIALS        = credentials('ssh-ed25519-credentials-id')
+        PATH                   = "/usr/local/bin:/opt/homebrew/bin:$PATH"
     }
+
     stages {
-        stage('Checkout with PQC') {
+        stage('Checkout') {
             steps {
                 sshagent(credentials: ['ssh-ed25519-credentials-id']) {
                     sh '''
-                        echo "=== Configuring SSH for Post-Quantum Cryptography ==="
-                        
-                        # Configure SSH to use mlkem512-sha256 for localhost (your OQS-OpenSSH server)
-                        cat > ~/.ssh/config << EOF
-Host localhost
-    User mehoolgoria
-    Port 2222
-    KexAlgorithms mlkem512-sha256
-    IdentityFile ~/.ssh/id_ed25519
-    StrictHostKeyChecking no
-EOF
+                        echo "Host localhost\\n  User mehoolgoria\\n  Port 2222\\n  KexAlgorithms mlkem512-sha256\\n  IdentityFile /Users/mehoolgoria/.ssh/id_ed25519" > ~/.ssh/config
                         chmod 600 ~/.ssh/config
-                        
-                        echo "=== Testing PQC SSH Connection ==="
-                        # Test SSH connection with verbose output to verify mlkem512-sha256 usage
-                        /usr/local/bin/ssh -v -T -p 2222 mehoolgoria@localhost 2>&1 | grep -E "(kex|mlkem512)" || true
-                        
-                        echo "=== Cloning Repository with PQC ==="
-                        # Clone from local Git server using PQC
-                        git clone ssh://mehoolgoria@localhost:2222/Users/mehoolgoria/pqc_nuig_local.git .
+                        /usr/local/bin/ssh -T -p 2222 mehoolgoria@localhost || true
+                        git clone ssh://mehoolgoria@localhost:2222/~/pqc_nuig_local.git .
                         git checkout main
-                        
-                        echo "=== Repository Cloned Successfully with mlkem512-sha256 ==="
-                        ls -la
                     '''
                 }
             }
         }
-        
-        stage('Verify PQC Integration') {
-            steps {
-                sh '''
-                    echo "=== Post-Quantum Cryptography Verification ==="
-                    echo "✓ Repository cloned using mlkem512-sha256 key exchange"
-                    echo "✓ SSH authentication using ssh-ed25519"
-                    echo "✓ Hybrid PQC setup working in Jenkins pipeline"
-                    
-                    # Log this achievement for thesis documentation
-                    cat > pqc_integration_log.txt << EOF
-Timestamp: $(date)
-Achievement: Successfully integrated mlkem512-sha256 into Jenkins CI/CD pipeline
-Key Exchange: mlkem512-sha256 (Post-Quantum)
-Authentication: ssh-ed25519 (Classical)
-Transport: SSH over localhost:2222 (OQS-OpenSSH server)
-Status: SUCCESS - Step 2.2 Completed
-EOF
-                    
-                    cat pqc_integration_log.txt
-                '''
-            }
-        }
-        
+
         stage('Setup Python Environment') {
             steps {
                 sh '''
-                    python3 --version
-                    python3 -m venv venv
+                    python3 --version || python --version
+                    python3 -m venv venv || python -m venv venv
                     source venv/bin/activate
                     pip install --upgrade pip
                 '''
             }
         }
-        
+
         stage('Install Dependencies') {
             steps {
                 sh '''
@@ -81,32 +41,26 @@ EOF
                 '''
             }
         }
-        
+
         stage('Test') {
             steps {
                 sh '''
                     source venv/bin/activate
-                    python -m unittest discover -s tests || echo "Tests completed"
+                    python -m unittest discover -s tests
                 '''
             }
         }
-        
+
         stage('Build Docker Image') {
             steps {
                 sh '''
-                    echo "=== Building PQC-Enhanced Docker Image ==="
                     docker --version
                     docker info
-                    
-                    # Add PQC metadata to build
-                    echo "# Built with Post-Quantum Cryptography integration" >> Dockerfile
-                    echo "# Key Exchange: mlkem512-sha256, Auth: ssh-ed25519" >> Dockerfile
-                    
                     docker build -t 9977262607/pqc-flask-demo:latest .
                 '''
             }
         }
-        
+
         stage('Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
@@ -119,57 +73,41 @@ EOF
             }
         }
     }
-    
+
     post {
         always {
             sh '''
-                # Archive PQC integration results for thesis
-                if [ -f "pqc_integration_log.txt" ]; then
-                    echo "=== PQC Integration Results ==="
-                    cat pqc_integration_log.txt
-                fi
-                
-                # Cleanup
                 if [ -d "venv" ]; then
                     rm -rf venv
                 fi
-                docker image prune -f || echo "Docker cleanup failed"
+                docker image prune -f || echo "Docker image cleanup failed"
             '''
             cleanWs()
         }
-        
+
         success {
-            echo 'SUCCESS: PQC-integrated pipeline completed!'
+            echo 'Pipeline completed successfully!'
             sh '''
-                echo "=== ACHIEVEMENT UNLOCKED ==="
-                echo "✅ mlkem512-sha256 key exchange working in Jenkins"
-                echo "✅ ssh-ed25519 authentication successful"
-                echo "✅ Step 2.2: Implement Kyber for Key Exchange - COMPLETED"
-                echo "✅ Docker image built and pushed successfully"
-                
                 echo "Docker images:"
-                docker images | grep pqc-flask-demo || echo "No images found"
+                docker images | grep pqc-flask-demo || echo "No pqc-flask-demo images found"
             '''
         }
-        
+
         failure {
-            echo 'Pipeline failed - debugging PQC integration'
+            echo 'Pipeline failed!'
             sh '''
-                echo "=== PQC Debug Information ==="
-                echo "SSH Version:"
-                /usr/local/bin/ssh -V || echo "OQS-OpenSSH not found"
-                
-                echo "SSH Server Status:"
-                ps aux | grep sshd || echo "SSH server not running"
-                
-                echo "SSH Configuration:"
-                cat ~/.ssh/config || echo "No SSH config"
-                
-                echo "Current Directory:"
+                echo "=== Docker Status ==="
+                docker --version || echo "Docker not available"
+                docker info || echo "Docker daemon not running"
+
+                echo "=== Python Status ==="
+                python3 --version || python --version || echo "Python not available"
+
+                echo "=== Current Directory ==="
                 ls -la
-                
-                echo "Git Status:"
-                git status || echo "Not a git repository"
+
+                echo "=== Requirements File ==="
+                cat requirements.txt || echo "requirements.txt not found"
             '''
         }
     }
