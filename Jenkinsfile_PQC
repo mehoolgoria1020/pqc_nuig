@@ -38,7 +38,11 @@ pipeline {
                     git config gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
                     git config user.signingkey /Users/mehoolgoria/.ssh/id_mldsa44.pub
                     echo -n "mehoolgoria@Mehools-MacBook-Pro.local ssh-mldsa44 " > ~/.ssh/allowed_signers
+<<<<<<< HEAD
                     awk '{print substr($0, index($0,$2))}' /Users/mehoolgoria/.ssh/id_mldsa44.pub | tr -d '\\n' >> ~/.ssh/allowed_signers
+=======
+                    awk '{print substr($0, index($0,$2))}' /Users/mehoolgoria/.ssh/id_mldsa44.pub | tr -d '\n' >> ~/.ssh/allowed_signers
+>>>>>>> 74644d3901c7ed4b7374cb485487250815f508b1
                     echo >> ~/.ssh/allowed_signers
                     chmod 600 ~/.ssh/allowed_signers
 
