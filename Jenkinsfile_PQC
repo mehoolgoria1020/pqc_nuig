@@ -37,6 +37,7 @@ pipeline {
                     git config gpg.ssh.program /usr/local/bin/ssh-keygen
                     git config gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
                     git config user.signingkey /Users/mehoolgoria/.ssh/id_mldsa44.pub
+<<<<<<< HEAD
                     echo -n "mehoolgoria@Mehools-MacBook-Pro.local ssh-mldsa44 " > ~/.ssh/allowed_signers
 <<<<<<< HEAD
                     awk '{print substr($0, index($0,$2))}' /Users/mehoolgoria/.ssh/id_mldsa44.pub | tr -d '\\n' >> ~/.ssh/allowed_signers
@@ -44,6 +45,12 @@ pipeline {
                     awk '{print substr($0, index($0,$2))}' /Users/mehoolgoria/.ssh/id_mldsa44.pub | tr -d '\n' >> ~/.ssh/allowed_signers
 >>>>>>> 74644d3901c7ed4b7374cb485487250815f508b1
                     echo >> ~/.ssh/allowed_signers
+=======
+
+                    # Create allowed_signers file with proper quoting and newline
+                    echo "mehoolgoria@Mehools-MacBook-Pro.local ssh-mldsa44 $(awk '{print substr($0, index($0,$2))}' /Users/mehoolgoria/.ssh/id_mldsa44.pub | tr -d '\\n')" > ~/.ssh/allowed_signers
+                    echo "" >> ~/.ssh/allowed_signers  # Ensure a newline at the end
+>>>>>>> 1e9bb6af50170075da5a73634dbe8b4034bb844b
                     chmod 600 ~/.ssh/allowed_signers
 
                     echo "=== Debugging allowed_signers and ssh-keygen ==="
