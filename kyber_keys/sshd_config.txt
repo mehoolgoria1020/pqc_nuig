@@ -1,0 +1,11 @@
+Port 2222
+HostKey /usr/local/etc/ssh_host_ed25519_key
+HostKey /usr/local/etc/ssh_host_rsa_key
+HostKey /usr/local/etc/ssh_host_falcon512_key
+KexAlgorithms mlkem512-sha256,x25519-ml-kem-512-sha256@openquantumsafe.org,curve25519-sha256
+PubkeyAuthentication yes
+PubkeyAcceptedAlgorithms ssh-falcon512,ssh-ed25519
+AuthorizedKeysFile .ssh/authorized_keys
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+Subsystem sftp /usr/local/libexec/sftp-server

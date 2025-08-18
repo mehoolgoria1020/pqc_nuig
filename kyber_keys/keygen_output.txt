@@ -1,0 +1,18 @@
+Generating public/private mldsa44 key pair.
+kyber512_ssh already exists.
+Overwrite (y/n)? Your identification has been saved in kyber512_ssh
+Your public key has been saved in kyber512_ssh.pub
+The key fingerprint is:
+SHA256:JY4axlEDpGxy329DPOFITpATfRgLDEHGRCSGPJNISlQ mehoolgoria@Mehools-MacBook-Pro.local
+The key's randomart image is:
++-[MLDSA44 1312]--+
+|B@@E*=+o         |
+|*O..++oo.        |
+|o B ..+.o .      |
+| + o * * +       |
+|    = = S        |
+|   . o o .       |
+|    .   +        |
+|       . .       |
+|                 |
++----[SHA256]-----+

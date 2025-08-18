@@ -1,0 +1,3 @@
+drwxr-x---+ 29 mehoolgoria  staff   928 30 Jul 23:09 /Users/mehoolgoria
+drwx------   7 mehoolgoria  staff   224 30 Jul 22:59 /Users/mehoolgoria/.ssh
+-rw-------   1 mehoolgoria  staff  1277 31 Jul 21:13 /Users/mehoolgoria/.ssh/authorized_keys

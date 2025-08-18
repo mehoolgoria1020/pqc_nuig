@@ -1,0 +1,70 @@
+OpenSSH_9.7-2025-05_p1, Open Quantum Safe 2025-05, OpenSSL 3.5.1 1 Jul 2025
+debug1: Reading configuration data /usr/local/etc/ssh_config
+debug1: Authenticator provider $SSH_SK_PROVIDER did not resolve; disabling
+debug1: Connecting to localhost [::1] port 2222.
+debug1: Connection established.
+debug1: identity file /Users/mehoolgoria/.ssh/id_ed25519 type 3
+debug1: identity file /Users/mehoolgoria/.ssh/id_ed25519-cert type -1
+debug1: Local version string SSH-2.0-OpenSSH_9.7-2025-05_
+debug1: Remote protocol version 2.0, remote software version OpenSSH_9.7-2025-05_
+debug1: compat_banner: match: OpenSSH_9.7-2025-05_ pat OpenSSH* compat 0x04000000
+debug1: Authenticating to localhost:2222 as 'mehoolgoria'
+debug1: load_hostkeys: fopen /Users/mehoolgoria/.ssh/known_hosts2: No such file or directory
+debug1: load_hostkeys: fopen /usr/local/etc/ssh_known_hosts: No such file or directory
+debug1: load_hostkeys: fopen /usr/local/etc/ssh_known_hosts2: No such file or directory
+debug1: SSH2_MSG_KEXINIT sent
+debug1: SSH2_MSG_KEXINIT received
+debug1: kex: algorithm: mlkem512-sha256
+debug1: kex: host key algorithm: ssh-ed25519
+debug1: kex: server->client cipher: chacha20-poly1305@openssh.com MAC: <implicit> compression: none
+debug1: kex: client->server cipher: chacha20-poly1305@openssh.com MAC: <implicit> compression: none
+debug1: expecting SSH2_MSG_KEX_ECDH_REPLY
+debug1: SSH2_MSG_KEX_ECDH_REPLY received
+debug1: Server host key: ssh-ed25519 SHA256:RxWJSvJh/r8bj4H/25C8/wn8RRd7ljpxSJFM2TPgYbc
+debug1: load_hostkeys: fopen /Users/mehoolgoria/.ssh/known_hosts2: No such file or directory
+debug1: load_hostkeys: fopen /usr/local/etc/ssh_known_hosts: No such file or directory
+debug1: load_hostkeys: fopen /usr/local/etc/ssh_known_hosts2: No such file or directory
+debug1: Host '[localhost]:2222' is known and matches the ED25519 host key.
+debug1: Found key in /Users/mehoolgoria/.ssh/known_hosts:4
+debug1: ssh_packet_send2_wrapped: resetting send seqnr 3
+debug1: rekey out after 134217728 blocks
+debug1: SSH2_MSG_NEWKEYS sent
+debug1: Sending SSH2_MSG_EXT_INFO
+debug1: expecting SSH2_MSG_NEWKEYS
+debug1: ssh_packet_read_poll2: resetting read seqnr 3
+debug1: SSH2_MSG_NEWKEYS received
+debug1: rekey in after 134217728 blocks
+debug1: SSH2_MSG_EXT_INFO received
+debug1: kex_ext_info_client_parse: server-sig-algs=<ssh-ed25519,ecdsa-sha2-nistp256>
+debug1: kex_ext_info_check_ver: publickey-hostbound@openssh.com=<0>
+debug1: kex_ext_info_check_ver: ping@openssh.com=<0>
+debug1: SSH2_MSG_SERVICE_ACCEPT received
+debug1: SSH2_MSG_EXT_INFO received
+debug1: kex_ext_info_client_parse: server-sig-algs=<ssh-ed25519,ecdsa-sha2-nistp256>
+debug1: Authentications that can continue: publickey
+debug1: Next authentication method: publickey
+debug1: get_agent_identities: bound agent to hostkey
+debug1: get_agent_identities: ssh_fetch_identitylist: agent contains no identities
+debug1: Will attempt key: /Users/mehoolgoria/.ssh/id_ed25519 ED25519 SHA256:AT7pvL8IdP2DMlSTbrrJV4dR5sqftX660SlgxlRV6eM explicit
+debug1: Offering public key: /Users/mehoolgoria/.ssh/id_ed25519 ED25519 SHA256:AT7pvL8IdP2DMlSTbrrJV4dR5sqftX660SlgxlRV6eM explicit
+debug1: Server accepts key: /Users/mehoolgoria/.ssh/id_ed25519 ED25519 SHA256:AT7pvL8IdP2DMlSTbrrJV4dR5sqftX660SlgxlRV6eM explicit
+Authenticated to localhost ([::1]:2222) using "publickey".
+debug1: channel 0: new session [client-session] (inactive timeout: 0)
+debug1: Requesting no-more-sessions@openssh.com
+debug1: Entering interactive session.
+debug1: pledge: filesystem
+debug1: client_input_global_request: rtype hostkeys-00@openssh.com want_reply 0
+debug1: client_input_hostkeys: searching /Users/mehoolgoria/.ssh/known_hosts for [localhost]:2222 / (none)
+debug1: client_input_hostkeys: searching /Users/mehoolgoria/.ssh/known_hosts2 for [localhost]:2222 / (none)
+debug1: client_input_hostkeys: hostkeys file /Users/mehoolgoria/.ssh/known_hosts2 does not exist
+debug1: client_input_hostkeys: no new or deprecated keys from server
+debug1: Remote: /Users/mehoolgoria/.ssh/authorized_keys:1: key options: agent-forwarding port-forwarding pty user-rc x11-forwarding
+debug1: Remote: /Users/mehoolgoria/.ssh/authorized_keys:1: key options: agent-forwarding port-forwarding pty user-rc x11-forwarding
+debug1: pledge: fork
+Last login: Wed Jul 30 23:09:03 2025
+/Users/mehoolgoria/.zprofile:1: no such file or directory: /opt/homebrew/bin/brew
+/Users/mehoolgoria/.zprofile:2: no such file or directory: /opt/homebrew/bin/brew
+/Users/mehoolgoria/.zshrc:3: no such file or directory: /opt/homebrew/bin/brew
+/Users/mehoolgoria/.zshrc:4: no such file or directory: /opt/homebrew/bin/brew
+[1m[7m%[27m[1m[0m                                                                                                              [0m[27m[24m[Jmehoolgoria@Mehools-MacBook-Pro ~ % [K[?2004h[0m[27m[24m[Jmehoolgoria@Mehools-MacBook-Pro ~ % [0m[27m[24m[Jmehoolgoria@Mehools-MacBook-Pro ~ % [0m[27m[24m[Jmehoolgoria@Mehools-MacBook-Pro ~ % debug1: channel 0: free: client-session, nchannels 1
+Killed by signal 1.

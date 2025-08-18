@@ -1,0 +1,6 @@
+tcp6       0      0  ::1.2222               ::1.54026              ESTABLISHED
+tcp6       0      0  ::1.54026              ::1.2222               ESTABLISHED
+tcp6       0      0  ::1.2222               ::1.53938              ESTABLISHED
+tcp6       0      0  ::1.53938              ::1.2222               ESTABLISHED
+tcp4       0      0  *.2222                 *.*                    LISTEN     
+tcp6       0      0  *.2222                 *.*                    LISTEN     
