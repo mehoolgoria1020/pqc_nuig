@@ -43,9 +43,10 @@ pipeline {
                     echo "" >> ~/.ssh/allowed_signers  # Ensure a newline at the end
                     chmod 600 ~/.ssh/allowed_signers
 
-                    echo "=== Debugging allowed_signers and ssh-keygen ==="
+                    echo "=== Debugging allowed_signers ==="
                     cat ~/.ssh/allowed_signers
-                    /usr/local/bin/ssh-keygen -V
+                    # Temporarily skip ssh-keygen -V due to invalid flag
+                    # /usr/local/bin/ssh-keygen -V
                     git --version
                     git config --list | grep gpg
 
@@ -58,7 +59,6 @@ pipeline {
                 '''
             }
         }
-
         stage('Setup Python Environment') {
             steps {
                 sh '''
