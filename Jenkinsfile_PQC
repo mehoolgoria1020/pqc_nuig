@@ -34,7 +34,7 @@ pipeline {
                 sh '''
                     echo "=== Configuring Dilithium for Git Verification ==="
                     echo -n "mehoolgoria@Mehools-MacBook-Pro.local ssh-mldsa44 " > ~/.ssh/allowed_signers
-                    cat /Users/mehoolgoria/.ssh/id_mldsa44.pub | tr -d '\n' >> ~/.ssh/allowed_signers
+                    awk '{print $2 " " $3}' /Users/mehoolgoria/.ssh/id_mldsa44.pub | tr -d '\n' >> ~/.ssh/allowed_signers
                     echo >> ~/.ssh/allowed_signers
                     chmod 600 ~/.ssh/allowed_signers
                     git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
