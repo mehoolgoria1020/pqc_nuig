@@ -33,14 +33,26 @@ pipeline {
             steps {
                 sh '''
                     echo "=== Configuring Dilithium for Git Verification ==="
+                    git config gpg.format ssh
+                    git config gpg.ssh.program /usr/local/bin/ssh-keygen
+                    git config gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
+                    git config user.signingkey /Users/mehoolgoria/.ssh/id_mldsa44.pub
                     echo -n "mehoolgoria@Mehools-MacBook-Pro.local ssh-mldsa44 " > ~/.ssh/allowed_signers
-                    awk '{print substr($0, index($0,$2))}' /Users/mehoolgoria/.ssh/id_mldsa44.pub | tr -d '\n' >> ~/.ssh/allowed_signers
+                    awk '{print substr($0, index($0,$2))}' /Users/mehoolgoria/.ssh/id_mldsa44.pub | tr -d '\\n' >> ~/.ssh/allowed_signers
                     echo >> ~/.ssh/allowed_signers
                     chmod 600 ~/.ssh/allowed_signers
-                    git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
+
+                    echo "=== Debugging allowed_signers and ssh-keygen ==="
+                    cat ~/.ssh/allowed_signers
+                    /usr/local/bin/ssh-keygen -V
+                    git --version
+                    git config --list | grep gpg
 
                     echo "=== Verifying Dilithium-signed Commit ==="
-                    git verify-commit HEAD || { echo "❌ Commit signature verification failed"; exit 1; }
+                    git verify-commit HEAD || { echo "❌ Git verify-commit failed, falling back to manual verification...";
+                    git cat-file commit HEAD | grep -A 1 \"gpgsig\" | tail -n 1 > signature.sig;
+                    /usr/local/bin/ssh-keygen -Y verify -f ~/.ssh/allowed_signers -I mehoolgoria@Mehools-MacBook-Pro.local -n git -s signature.sig < /dev/null || exit 1;
+                    echo "✅ Manual verification succeeded"; }
                     echo "✅ Commit signed with ssh-mldsa44 verified successfully"
                 '''
             }
