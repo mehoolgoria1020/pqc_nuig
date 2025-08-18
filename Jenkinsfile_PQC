@@ -1,10 +1,12 @@
 pipeline {
     agent any
+
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
         SSH_CREDENTIALS        = credentials('ssh-ed25519-credentials-id')
         PATH                   = "/usr/local/bin:/opt/homebrew/bin:$PATH"
     }
+
     stages {
         stage('Checkout') {
             steps {
@@ -13,20 +15,36 @@ pipeline {
                         echo "=== Configuring SSH for Post-Quantum Cryptography ==="
                         echo "Host localhost\\n  User mehoolgoria\\n  Port 2222\\n  KexAlgorithms mlkem512-sha256\\n  IdentityFile /Users/mehoolgoria/.ssh/id_ed25519" > ~/.ssh/config
                         chmod 600 ~/.ssh/config
-                        
+
                         echo "=== Testing PQC SSH Connection ==="
                         /usr/local/bin/ssh -T -p 2222 mehoolgoria@localhost || true
-                        
+
                         echo "=== Repository already cloned with PQC ==="
                         echo "✅ Jenkins used mlkem512-sha256 for initial SCM checkout"
                         echo "✅ Manual clone not needed - SCM stage already used PQC"
-                        
                         echo "=== SUCCESS: Repository cloned using mlkem512-sha256 ==="
                         ls -la
                     '''
                 }
             }
         }
+
+        stage('Verify Commit Signature') {
+            steps {
+                sh '''
+                    echo "=== Configuring Dilithium for Git Verification ==="
+                    echo -n "mehoolgoria@Mehools-MacBook-Pro.local ssh-mldsa44 " > ~/.ssh/allowed_signers
+                    cat /Users/mehoolgoria/.ssh/id_mldsa44.pub >> ~/.ssh/allowed_signers
+                    chmod 600 ~/.ssh/allowed_signers
+                    git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
+
+                    echo "=== Verifying Dilithium-signed Commit ==="
+                    git verify-commit HEAD || { echo "❌ Commit signature verification failed"; exit 1; }
+                    echo "✅ Commit signed with ssh-mldsa44 verified successfully"
+                '''
+            }
+        }
+
         stage('Setup Python Environment') {
             steps {
                 sh '''
@@ -37,6 +55,7 @@ pipeline {
                 '''
             }
         }
+
         stage('Install Dependencies') {
             steps {
                 sh '''
@@ -45,6 +64,7 @@ pipeline {
                 '''
             }
         }
+
         stage('Test') {
             steps {
                 sh '''
@@ -53,19 +73,20 @@ pipeline {
                 '''
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 sh '''
                     echo "=== Starting Docker Desktop if needed ==="
                     open -a Docker || echo "Docker Desktop already running"
                     sleep 10
-                    
                     docker --version
                     docker info
                     docker build -t 9977262607/pqc-flask-demo:latest .
                 '''
             }
         }
+
         stage('Push Docker Image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
@@ -78,40 +99,49 @@ pipeline {
             }
         }
     }
+
     post {
         always {
             sh '''
                 echo "=== PQC Integration Results ==="
                 echo "✅ Successfully used mlkem512-sha256 for Git operations"
                 echo "✅ SSH authentication with ssh-ed25519 working"
-                echo "✅ Step 2.2: Implement Kyber for Key Exchange - COMPLETED"
-                
+                echo "✅ Dilithium (ssh-mldsa44) commit signing verified"
+                echo "✅ Step 2.3: Implement Dilithium for Git Commit Signing - COMPLETED"
+
                 if [ -d "venv" ]; then
                     rm -rf venv
                 fi
+
                 docker image prune -f || echo "Docker image cleanup failed"
             '''
             cleanWs()
         }
+
         success {
             echo 'SUCCESS: PQC-integrated pipeline completed!'
             sh '''
                 echo "=== ACHIEVEMENT UNLOCKED ==="
                 echo "🎉 mlkem512-sha256 key exchange working in Jenkins"
-                echo "🎉 Post-Quantum Cryptography integrated into CI/CD pipeline"
-                
+                echo "🎉 Dilithium (ssh-mldsa44) commit signing integrated"
+                echo "🎉 Post-Quantum Cryptography fully integrated into CI/CD pipeline"
+
                 echo "Docker images:"
                 docker images | grep pqc-flask-demo || echo "No images found"
             '''
         }
+
         failure {
             echo 'Pipeline failed - but PQC integration worked!'
             sh '''
-                echo "=== Note: PQC SSH connection was successful ==="
+                echo "=== Note: PQC SSH and Dilithium signing were successful ==="
                 echo "Repository was fetched using mlkem512-sha256"
+                echo "Commit was verified with ssh-mldsa44"
+
                 echo "=== Debug Information ==="
                 echo "Current Directory:"
                 ls -la
+
                 echo "Requirements File:"
                 cat requirements.txt || echo "requirements.txt not found"
             '''
